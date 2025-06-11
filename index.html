@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Contact Book</title>
+    </head>
+    <body onload="fetchContacts()">
+        <div id="table">Contacts loading..</div>
+        <button id="refresh" type="button">Refresh</button>
+        <button id="addContact" type="button">AddContact</button>
+
+        <script src="config.js"></script>
+        <script>
+            //event listener
+            document.getElementById("refresh").addEventListener("click", fetchContacts);
+            document.getElementById("addContact").addEventListener("click", addContact);
+
+            //function to retrieve all the contacts automatically
+            function fetchContacts(){
+                fetch(rootPath + 'controller/get-contacts/')
+                .then(function(response){
+                    return response.json(); //change response value to a JSON object array. Remember: JSON aalows the exchange of data from one computer to anther
+                })
+                .then(function(data){ //calls displayOutput() function
+                    displayOutput(data); //converts JSON object to be readable
+                    //console.log(data); //displays the value of the data variable in the console tab of your browser, checking if the code works
+                })
+            }
+
+            function displayOutput(data){
+                output = "<table>";
+
+                /*back ticks (``) represent a string template. 
+                Same function as double quotes but you can have a multiline string (this is where a normal string fails)
+                Allows variables in a string via interpolation*/
+                //${variable}: interpolation- automatic replacing of expressions with real values
+
+                for(a in data){ //for each element (a) in the data object array       
+                    output += ` 
+                        <tr onclick="editContact(${data[a].id})">
+                            <td><img src="${rootPath}controller/uploads/${data[a].avatar}"/></td> 
+                            <td><h5>${data[a].firstname}</h5></td>
+                            <td><h5>${data[a].lastname}</h5></td>
+                        </tr>
+                    `
+                }
+
+                output += "<table>";
+                document.getElementById("table").innerHTML = output;
+            }
+
+            function addContact(){
+                window.open("addContact.html", "_self");
+            }
+
+            function editContact(id){
+                window.open("editContact.html?id=" + id, "_self");
+            }
+        </script>
+    </body>
+</html>
